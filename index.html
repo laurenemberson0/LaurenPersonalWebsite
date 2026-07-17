@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lauren emberson</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== LEFT SIDEBAR ===================== -->
+  <!-- To edit the welcome text, just change the words below. -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__intro">
+      <p class="lede">hello + welcome.</p>
+
+      <p>i’m a writer, photographer, designer, and ‘make it happen’ person
+      living in british columbia, canada.</p>
+
+      <p>i’m interested in quirky canadian culture, collecting coffee mugs,
+      thoughtful design, snail mail, entrepreneurship, american football (the
+      sport), american football (the band), and preserving physical media.</p>
+
+      <p>this site is a collection of my work, projects, hobbies, and other fun
+      things i've collected along the way.</p>
+
+      <p>kick up your feet, stay a while.</p>
+    </div>
+
+    <!-- The clickable buttons at the bottom -->
+    <nav class="sidebar__nav">
+      <!-- Photo: opens your photography site (set the link in js/data.js) -->
+      <a class="btn" id="photo-btn" href="#" target="_blank" rel="noopener">
+        <span>Photo</span>
+      </a>
+
+      <!-- Writing: another page on this site -->
+      <a class="btn" href="writing.html"><span>Writing</span></a>
+
+      <!-- Library: another page on this site -->
+      <a class="btn" href="library.html"><span>Library</span></a>
+
+      <!-- Send Me Away: random link (set the list in js/data.js) -->
+      <a class="btn" id="send-me-away-btn" href="#"><span>Send Me Away</span></a>
+    </nav>
+  </aside>
+
+  <!-- ===================== SLIDESHOW ===================== -->
+  <!-- The images are added automatically from js/data.js -->
+  <main class="slideshow" id="slideshow"></main>
+
+  <!-- Scripts: data.js must load first, then main.js -->
+  <script src="js/data.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

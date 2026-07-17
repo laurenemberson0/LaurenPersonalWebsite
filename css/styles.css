@@ -1,0 +1,324 @@
+/* ============================================================================
+   styles.css  —  the look & feel of the whole site.
+   You usually won't need to touch this. Fonts, sizes, and layout live here.
+============================================================================ */
+
+/* --- Basic reset so the site looks the same in every browser --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* The sidebar colour is set live by JavaScript, but we give it a start value */
+  --sidebar-color: #2e3a2f;
+  --sidebar-text: #ffffff;
+  --fade-time: 1.2s;            /* how long the cross-fade takes */
+  --sidebar-width: 22%;         /* width of the left sidebar (~20%) */
+}
+
+html, body {
+  height: 100%;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;              /* "medium size" base text */
+  line-height: 1.6;
+  color: #1c1c1c;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+
+/* ============================================================================
+   SIDEBAR (shared by every page)
+============================================================================ */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;   /* text at top, buttons at bottom */
+  background-color: var(--sidebar-color);
+  color: var(--sidebar-text);
+  /* the smooth colour cross-fade when images change: */
+  transition: background-color var(--fade-time) ease-in-out,
+              color var(--fade-time) ease-in-out;
+  z-index: 10;
+  overflow-y: auto;
+}
+
+.sidebar__intro p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.sidebar__intro .lede {
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+/* The navigation buttons: text with a medium-thickness rectangle around them */
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;          /* centred within the sidebar */
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  width: 80%;
+  max-width: 220px;
+  text-align: center;
+  padding: 0.6rem 1rem;
+  border: 2px solid currentColor;   /* medium-thickness rectangle line */
+  color: inherit;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+}
+
+.btn:hover {
+  background-color: currentColor;   /* fill on hover... */
+}
+.btn:hover span {
+  color: var(--sidebar-color);      /* ...text flips to the sidebar colour */
+}
+
+
+/* ============================================================================
+   MAIN CONTENT AREA (right of sidebar)
+============================================================================ */
+.content {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+}
+
+
+/* ============================================================================
+   LANDING PAGE SLIDESHOW
+============================================================================ */
+.slideshow {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  height: 100vh;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;                     /* fill the whole area */
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity var(--fade-time) ease-in-out;
+}
+
+.slide.is-active {
+  opacity: 1;
+}
+
+
+/* ============================================================================
+   WRITING PAGE
+============================================================================ */
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+}
+
+.page__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.entry {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 1.25rem 0;
+}
+
+.entry__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #1c1c1c;
+}
+
+.entry__toggle {
+  display: inline-block;
+  width: 1.2em;
+  font-weight: 400;
+  color: #888;
+}
+
+.entry__date {
+  font-size: 0.85rem;
+  color: #999;
+  font-weight: 400;
+}
+
+.entry__body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.entry__body-inner {
+  padding-top: 0.75rem;
+  white-space: pre-line;        /* keeps your line breaks from data.js */
+  font-size: 1rem;
+  color: #333;
+}
+
+.entry.is-open .entry__body {
+  max-height: 2000px;           /* big enough for long writing */
+}
+
+
+/* ============================================================================
+   LIBRARY PAGE (music + books)
+============================================================================ */
+.library-section {
+  padding: 3rem 2rem;
+}
+
+.library-section + .library-section {
+  border-top: 1px solid #ececec;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Horizontal left/right scrolling row of covers */
+.cover-row {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x proximity;
+}
+.cover-row::-webkit-scrollbar { height: 8px; }
+.cover-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+.cover-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 220px;
+  scroll-snap-align: start;
+}
+
+.cover-card__img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  background: #eee;
+}
+
+.cover-card__caption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+.cover-card__caption .title { font-weight: 600; }
+.cover-card__caption .by { color: #777; }
+
+/* The panel that appears when you hover over a cover */
+.cover-card__overlay {
+  position: absolute;
+  inset: 0;
+  height: 220px;                /* only cover the image, not the caption */
+  background: rgba(20, 20, 20, 0.82);
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  padding: 1rem;
+  text-align: center;
+}
+
+.cover-card:hover .cover-card__overlay {
+  opacity: 1;
+}
+
+.stars {
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  color: #ffd166;
+}
+
+.overlay-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.overlay-links a {
+  border: 1.5px solid #fff;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: #fff;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.overlay-links a:hover {
+  background: #fff;
+  color: #111;
+}
+
+
+/* ============================================================================
+   MOBILE / SMALL SCREENS
+   The fixed sidebar becomes a normal block at the top so nothing overlaps.
+============================================================================ */
+@media (max-width: 800px) {
+  :root { --sidebar-width: 100%; }
+
+  .sidebar {
+    position: relative;
+    height: auto;
+    width: 100%;
+  }
+
+  .content { margin-left: 0; }
+
+  .slideshow {
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: 60vh;
+  }
+
+  .sidebar__nav { align-items: stretch; }
+}

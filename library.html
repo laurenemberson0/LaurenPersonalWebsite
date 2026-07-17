@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>library — lauren emberson</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== LEFT SIDEBAR (same as home) ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__intro">
+      <p class="lede">hello + welcome.</p>
+      <p>i’m a writer, photographer, designer, and ‘make it happen’ person
+      living in british columbia, canada.</p>
+      <p>i’m interested in quirky canadian culture, collecting coffee mugs,
+      thoughtful design, snail mail, entrepreneurship, american football (the
+      sport), american football (the band), and preserving physical media.</p>
+      <p>this site is a collection of my work, projects, hobbies, and other fun
+      things i've collected along the way.</p>
+      <p>kick up your feet, stay a while.</p>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a class="btn" href="index.html"><span>Home</span></a>
+      <a class="btn" id="photo-btn" href="#" target="_blank" rel="noopener">
+        <span>Photo</span>
+      </a>
+      <a class="btn" href="writing.html"><span>Writing</span></a>
+      <a class="btn" href="library.html"><span>Library</span></a>
+      <a class="btn" id="send-me-away-btn" href="#"><span>Send Me Away</span></a>
+    </nav>
+  </aside>
+
+  <!-- ===================== LIBRARY CONTENT ===================== -->
+  <main class="content">
+    <!-- MUSIC: top half -->
+    <section class="library-section">
+      <h2 class="section-title">Music</h2>
+      <div class="cover-row" id="music-row"></div>
+    </section>
+
+    <!-- BOOKS: bottom half -->
+    <section class="library-section">
+      <h2 class="section-title">Books</h2>
+      <div class="cover-row" id="books-row"></div>
+    </section>
+  </main>
+
+  <script>
+    document.documentElement.style.setProperty('--sidebar-color', '#3a4a63');
+    document.documentElement.style.setProperty('--sidebar-text', '#ffffff');
+  </script>
+
+  <script src="js/data.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/library.js"></script>
+</body>
+</html>
