@@ -303,11 +303,21 @@ a { color: inherit; }
   fill: currentColor;           /* = white */
   display: block;
 }
+/* The Wikipedia globe is drawn with lines, not a solid shape */
+.overlay-links svg.icon--stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
 
 
 /* ============================================================================
-   MOBILE / SMALL SCREENS
-   The fixed sidebar becomes a normal block at the top so nothing overlaps.
+   RESPONSIVE — SMALL SCREENS
+   • The fixed sidebar becomes a normal full-width block so nothing overlaps.
+   • On the LANDING PAGE the photos are hidden — mobile shows ONLY the sidebar
+     (the colour still gently cross-fades on its own).
+   • Content pages (Writing / Library) show the sidebar on top, content below.
 ============================================================================ */
 @media (max-width: 800px) {
   :root { --sidebar-width: 100%; }
@@ -315,17 +325,36 @@ a { color: inherit; }
   .sidebar {
     position: relative;
     height: auto;
+    min-height: 100vh;            /* sidebar fills the screen on the home page */
     width: 100%;
   }
 
   .content { margin-left: 0; }
 
-  .slideshow {
-    position: relative;
-    left: 0;
+  /* Landing-page photos are hidden on mobile — sidebar only. */
+  .slideshow { display: none; }
+
+  .sidebar__nav { align-items: center; }
+}
+
+/* --- Phones: shrink text + buttons so everything fits comfortably --- */
+@media (max-width: 500px) {
+  html, body { font-size: 15px; }
+
+  .sidebar { padding: 1.75rem 1.5rem; }
+
+  .sidebar__intro p { margin-bottom: 0.75rem; }
+
+  .btn {
     width: 100%;
-    height: 60vh;
+    max-width: none;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
   }
 
-  .sidebar__nav { align-items: stretch; }
+  .sidebar__nav { gap: 0.5rem; margin-top: 1.5rem; }
+
+  /* Library covers scale down a touch on small phones */
+  .cover-card, .cover-card__img { width: 170px; }
+  .cover-card__overlay { height: 170px; }
 }
