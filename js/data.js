@@ -144,14 +144,14 @@ const MUSIC = [
     rating: 4,
     apple: "https://music.apple.com",
     spotify: "https://open.spotify.com",
-    wikipedia: ""
+    wikipedia: "https://en.wikipedia.org"
   },
   {
     cover: "images/albums/album3.svg",
     title: "Placeholder Album Three",
     artist: "Someone Else",
     rating: 3.5,
-    apple: "",
+    apple: "https://music.apple.com",
     spotify: "https://open.spotify.com",
     wikipedia: "https://en.wikipedia.org"
   }
@@ -184,14 +184,14 @@ const BOOKS = [
     author: "Another Author",
     rating: 4.5,
     goodreads: "https://www.goodreads.com",
-    wikipedia: ""
+    wikipedia: "https://en.wikipedia.org"
   },
   {
     cover: "images/books/book3.svg",
     title: "Placeholder Book Three",
     author: "A Third Author",
     rating: 4,
-    goodreads: "",
+    goodreads: "https://www.goodreads.com",
     wikipedia: "https://en.wikipedia.org"
   }
 ];
