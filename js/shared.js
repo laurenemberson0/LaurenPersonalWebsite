@@ -23,6 +23,28 @@
   }
 })();
 
+/* Keep the navigation buttons visible: if the sidebar's content is too tall to
+   fit (because the screen is short OR narrow enough that text wraps), hide the
+   long "interests" paragraph. Re-checks whenever the window is resized. */
+(function keepButtonsVisible() {
+  const sidebar = document.getElementById("sidebar");
+  if (!sidebar) return;
+
+  function fit() {
+    // Always start by showing the paragraph, then measure.
+    sidebar.classList.remove("is-cramped");
+    // If the content is taller than the space available, it overflows —
+    // so hide the paragraph to make room for the buttons.
+    if (sidebar.scrollHeight > sidebar.clientHeight + 1) {
+      sidebar.classList.add("is-cramped");
+    }
+  }
+
+  window.addEventListener("resize", fit);
+  window.addEventListener("load", fit);
+  fit();
+})();
+
 /* Given a background hex colour, decide whether black or white text reads best.
    Used so the sidebar text is always legible on any colour you choose. */
 function readableTextColor(hex) {

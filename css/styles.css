@@ -359,8 +359,9 @@ a { color: inherit; }
   .cover-card__overlay { height: 170px; }
 }
 
-/* --- Short screens: drop the long "interests" paragraph so the buttons
-       stay in view without having to scroll. --- */
-@media (max-height: 720px) {
-  .interests { display: none; }
+/* --- When the sidebar runs out of room (screen too short OR too narrow, so
+       the paragraph wraps taller), JavaScript adds the "is-cramped" class and
+       this hides the long interests paragraph so the buttons stay in view. --- */
+.sidebar.is-cramped .interests {
+  display: none;
 }
