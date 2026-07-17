@@ -358,3 +358,9 @@ a { color: inherit; }
   .cover-card, .cover-card__img { width: 170px; }
   .cover-card__overlay { height: 170px; }
 }
+
+/* --- Short screens: drop the long "interests" paragraph so the buttons
+       stay in view without having to scroll. --- */
+@media (max-height: 720px) {
+  .interests { display: none; }
+}
