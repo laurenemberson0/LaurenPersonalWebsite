@@ -29,11 +29,20 @@ function makeCard(item, kind) {
   const media = document.createElement("div");
   media.className = "cover-card__media";
 
-  const img = document.createElement("img");
-  img.className = "cover-card__img";
-  img.src = item.cover;
-  img.alt = item.title;
-  img.loading = "lazy";
+  // If there's a cover image use it; otherwise show a tidy title tile so the
+  // card still looks intentional when no poster/cover has been added yet.
+  let art;
+  if (item.cover && item.cover.trim() !== "") {
+    art = document.createElement("img");
+    art.className = "cover-card__img";
+    art.src = item.cover;
+    art.alt = item.title;
+    art.loading = "lazy";
+  } else {
+    art = document.createElement("div");
+    art.className = "cover-card__fallback";
+    art.textContent = item.title;
+  }
 
   // Caption under the cover (always visible)
   const caption = document.createElement("div");
@@ -92,7 +101,7 @@ function makeCard(item, kind) {
 
   overlay.appendChild(links);
 
-  media.appendChild(img);
+  media.appendChild(art);
   media.appendChild(overlay);
   card.appendChild(media);
   card.appendChild(caption);
@@ -110,14 +119,35 @@ function fillRow(rowId, dataList, kind) {
 
 fillRow("music-row", typeof MUSIC !== "undefined" ? MUSIC : [], "music");
 fillRow("books-row", typeof BOOKS !== "undefined" ? BOOKS : [], "book");
+fillRow("movies-row", typeof MOVIES !== "undefined" ? MOVIES : [], "movie");
 
-/* Movies: prefer the auto-synced Letterboxd list when it has entries,
-   otherwise fall back to the manual list in data.js. */
-var movieList =
-  (typeof MOVIES_AUTO !== "undefined" && Array.isArray(MOVIES_AUTO) && MOVIES_AUTO.length)
-    ? MOVIES_AUTO
-    : (typeof MOVIES !== "undefined" ? MOVIES : []);
-fillRow("movies-row", movieList, "movie");
+/* --- Search box: typing filters every section, hiding non-matching cards
+   (and hiding a whole section if nothing in it matches). ------------------- */
+(function setUpSearch() {
+  const input = document.getElementById("library-search-input");
+  if (!input) return;
+
+  input.addEventListener("input", function () {
+    const q = input.value.trim().toLowerCase();
+
+    document.querySelectorAll(".library-section").forEach(function (section) {
+      let anyVisible = false;
+      section.querySelectorAll(".cover-card").forEach(function (card) {
+        // Match against the visible caption text (title + artist/author/etc.)
+        const cap = card.querySelector(".cover-card__caption");
+        const text = (cap ? cap.textContent : card.textContent).toLowerCase();
+        const match = q === "" || text.indexOf(q) !== -1;
+        card.style.display = match ? "" : "none";
+        if (match) anyVisible = true;
+      });
+      // Hide the whole section (title + row) when it has no matches.
+      section.style.display = anyVisible || q === "" ? "" : "none";
+    });
+
+    // Re-check the scroll arrows now that widths changed.
+    window.dispatchEvent(new Event("resize"));
+  });
+})();
 
 /* --- Left/right scroll arrows -------------------------------------------- */
 (function setUpScrollArrows() {

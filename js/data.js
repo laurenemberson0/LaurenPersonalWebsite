@@ -283,28 +283,18 @@ const BOOKS = [
      wikipedia  -> Wikipedia link   (leave "" to hide this button)
 ---------------------------------------------------------------------------- */
 const MOVIES = [
-  {
-    cover: "images/movies/movie1.svg",
-    title: "Placeholder Movie One",
-    director: "A Director",
-    rating: 5,
-    letterboxd: "https://letterboxd.com",
-    wikipedia: "https://en.wikipedia.org"
-  },
-  {
-    cover: "images/movies/movie2.svg",
-    title: "Placeholder Movie Two",
-    director: "Another Director",
-    rating: 4.5,
-    letterboxd: "https://letterboxd.com",
-    wikipedia: "https://en.wikipedia.org"
-  },
-  {
-    cover: "images/movies/movie3.svg",
-    title: "Placeholder Movie Three",
-    director: "A Third Director",
-    rating: 3.5,
-    letterboxd: "https://letterboxd.com",
-    wikipedia: "https://en.wikipedia.org"
-  }
+  // Your 5-star films. cover is left "" for now, so each shows a title tile
+  // until posters are added. director is blank until we fill it in.
+  { cover: "", title: "Aftersun", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Licorice Pizza", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Boyhood", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "C'mon C'mon", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Bo Burnham: Inside", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Sound of Metal", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Meet the Robinsons", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Singin' in the Rain", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Trainspotting", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Fantastic Mr. Fox", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Submarine", director: "", rating: 5, letterboxd: "", wikipedia: "" },
+  { cover: "", title: "Whiplash", director: "", rating: 5, letterboxd: "", wikipedia: "" }
 ];
