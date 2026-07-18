@@ -49,22 +49,20 @@ async function searchArtwork(title) {
     "https://itunes.apple.com/search?term=" +
     encodeURIComponent(q) +
     "&media=movie&entity=movie&limit=1&country=US";
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-    if (res.status === 403 || res.status === 429) {
-      await sleep(30000); // Apple throttled us — wait a full window and retry
-      continue;
-    }
-    if (!res.ok) throw new Error("search HTTP " + res.status);
-    const data = await res.json();
-    return data.results && data.results[0] ? data.results[0].artworkUrl100 : null;
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+  if (res.status === 403 || res.status === 429) {
+    const e = new Error("throttled"); // skip fast; a later pass will retry it
+    e.throttled = true;
+    throw e;
   }
-  throw new Error("throttled");
+  if (!res.ok) throw new Error("search HTTP " + res.status);
+  const data = await res.json();
+  return data.results && data.results[0] ? data.results[0].artworkUrl100 : null;
 }
 
 (async () => {
   const usedFiles = new Set(Object.values(map).map((p) => path.basename(p)));
-  let done = 0, skipped = 0, missing = 0, failed = 0;
+  let done = 0, skipped = 0, missing = 0, failed = 0, throttled = 0;
 
   for (const m of MOVIES) {
     const title = m.title;
@@ -87,8 +85,8 @@ async function searchArtwork(title) {
       done++;
       if (done % 25 === 0) console.log(done + " posters fetched so far…");
     } catch (e) {
-      failed++;
-      console.log("fail: " + title + " — " + e.message);
+      if (e.throttled) { throttled++; }
+      else { failed++; console.log("fail: " + title + " — " + e.message); }
     }
     // Apple's search API allows ~20 requests/minute, so pace ~1 every 3.5s.
     await sleep(3500);
@@ -103,7 +101,8 @@ async function searchArtwork(title) {
 
   console.log(
     "DONE — new: " + done + ", skipped(existing): " + skipped +
-    ", no-match: " + missing + ", failed: " + failed +
+    ", no-match: " + missing + ", throttled(retry next run): " + throttled +
+    ", failed: " + failed +
     ", total mapped: " + Object.keys(map).length + " / " + MOVIES.length
   );
 })().catch((e) => { console.error("Fatal: " + e.message); process.exit(1); });
