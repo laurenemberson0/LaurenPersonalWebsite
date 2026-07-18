@@ -38,24 +38,54 @@
 ---------------------------------------------------------------------------- */
 const SLIDES = [
   {
-    image: "images/slideshow/slide1.svg",
-    sidebarColor: "#2e3a2f",   // muted forest green
-    textColor: ""
+    image: "images/slideshow/photo1.jpg",
+    sidebarColor: "#565B61",
+    textColor: "#D9CBAA"
   },
   {
-    image: "images/slideshow/slide2.svg",
-    sidebarColor: "#7a3b2e",   // warm terracotta
-    textColor: ""
+    image: "images/slideshow/photo2.jpg",
+    sidebarColor: "d2e1acff",
+    textColor: "#406663"
   },
   {
-    image: "images/slideshow/slide3.svg",
-    sidebarColor: "#3a4a63",   // dusty blue
-    textColor: ""
+    image: "images/slideshow/photo3.jpg",
+    sidebarColor: "#E9E8E7",
+    textColor: "#6F96AC"
   },
   {
-    image: "images/slideshow/slide4.svg",
-    sidebarColor: "#6d5a7a",   // soft plum
-    textColor: ""
+    image: "images/slideshow/photo4.jpg",
+    sidebarColor: "#797588",
+    textColor: "#b9c0d0ff"
+  },
+  {
+    image: "images/slideshow/photo5.jpg",
+    sidebarColor: "#6293BF",
+    textColor: "#f8efdeff"
+  },
+  {
+    image: "images/slideshow/photo6.jpg",
+    sidebarColor: "#95aeb2ff",
+    textColor: "#48697F"
+  },
+  {
+    image: "images/slideshow/photo7.jpg",
+    sidebarColor: "#3a4a63",
+    textColor: "#000000ff"
+  },
+  {
+    image: "images/slideshow/photo8.jpg",
+    sidebarColor: "#b1c5e2ff",
+    textColor: "#5c7dacff"
+  },
+  {
+    image: "images/slideshow/photo9.jpg",
+    sidebarColor: "#a1b9c3ff",
+    textColor: "#4e5c27ff"
+  },
+  {
+    image: "images/slideshow/photo10.jpg",
+    sidebarColor: "#6d5a7a",
+    textColor: "#496f78ff"
   }
 ];
 
@@ -70,7 +100,7 @@ const SLIDE_DURATION = 5000;
    This button sends visitors to your photography website.
    Replace the address below with your real photo site.
 ---------------------------------------------------------------------------- */
-const PHOTO_URL = "https://example.com/your-photography";
+const PHOTO_URL = "https://laurenembersonphotography.com";
 
 
 /* ----------------------------------------------------------------------------
@@ -80,11 +110,15 @@ const PHOTO_URL = "https://example.com/your-photography";
    chosen at random. Add as many as you like.
 ---------------------------------------------------------------------------- */
 const SEND_ME_AWAY = [
-  "https://www.atlasobscura.com",
-  "https://www.openculture.com",
+  "https://rotating.parts/",
+  "https://randoma11y.com/",
+  "https://www.aldaily.com/",
+  "https://neal.fun/",
+  "https://90s.myretrotvs.com/",
+  "https://jspaint.app/#local:14066bffee5df",
+  "https://sandspiel.club/",
+  "https://radio.garden/",
   "https://www.thisiscolossal.com",
-  "https://radio.garden",
-  "https://www.pointerpointer.com"
 ];
 
 
@@ -129,31 +163,31 @@ best postcard you ever received. delete this and make it yours.`
 ---------------------------------------------------------------------------- */
 const MUSIC = [
   {
-    cover: "images/albums/album1.svg",
-    title: "Placeholder Album One",
-    artist: "An Artist",
-    rating: 5,
-    apple: "https://music.apple.com",
-    spotify: "https://open.spotify.com",
-    wikipedia: "https://en.wikipedia.org"
-  },
-  {
-    cover: "images/albums/album2.svg",
-    title: "Placeholder Album Two",
-    artist: "Another Artist",
+    cover: "images/albums/alvvays-alvvays.jpg",
+    title: "Alvvays",
+    artist: "Alvvays",
     rating: 4,
-    apple: "https://music.apple.com",
-    spotify: "https://open.spotify.com",
-    wikipedia: "https://en.wikipedia.org"
+    apple: "",
+    spotify: "",
+    wikipedia: ""
   },
   {
-    cover: "images/albums/album3.svg",
-    title: "Placeholder Album Three",
-    artist: "Someone Else",
-    rating: 3.5,
-    apple: "https://music.apple.com",
-    spotify: "https://open.spotify.com",
-    wikipedia: "https://en.wikipedia.org"
+    cover: "images/albums/arcticmonkey-whatever-people-say-i-am.jpeg",
+    title: "Whatever People Say I Am, That's What I'm Not",
+    artist: "Arctic Monkeys",
+    rating: 4.5,
+    apple: "",
+    spotify: "",
+    wikipedia: ""
+  },
+  {
+    cover: "images/albums/Alanis_Morissette_Jagged_Little_Pill.jpg",
+    title: "Jagged Little Pill",
+    artist: "Alanis Morissette",
+    rating: 4.5,
+    apple: "",
+    spotify: "",
+    wikipedia: ""
   }
 ];
 
@@ -171,27 +205,67 @@ const MUSIC = [
 ---------------------------------------------------------------------------- */
 const BOOKS = [
   {
-    cover: "images/books/book1.svg",
-    title: "Placeholder Book One",
-    author: "An Author",
-    rating: 5,
-    goodreads: "https://www.goodreads.com",
-    wikipedia: "https://en.wikipedia.org"
-  },
-  {
-    cover: "images/books/book2.svg",
-    title: "Placeholder Book Two",
-    author: "Another Author",
-    rating: 4.5,
-    goodreads: "https://www.goodreads.com",
-    wikipedia: "https://en.wikipedia.org"
-  },
-  {
-    cover: "images/books/book3.svg",
-    title: "Placeholder Book Three",
-    author: "A Third Author",
+    cover: "images/books/football-chuck.jpg",
+    title: "Football",
+    author: "Chuck Klosterman",
     rating: 4,
-    goodreads: "https://www.goodreads.com",
-    wikipedia: "https://en.wikipedia.org"
+    goodreads: "",
+    wikipedia: ""
+  },
+  {
+    cover: "images/books/alphabeticaldiaries-sheila.jpg",
+    title: "Alphabetical Diaries",
+    author: "Sheila Heti",
+    rating: 4,
+    goodreads: "",
+    wikipedia: ""
+  },
+    {
+    cover: "images/books/goodmaterial-dolly.jpg",
+    title: "Good Material",
+    author: "Dolly Alderton",
+    rating: 3,
+    goodreads: "",
+    wikipedia: ""
+  },
+  {
+    cover: "images/books/artislife-jerry.jpg",
+    title: "Art Is Life",
+    author: "Jerry Saltz",
+    rating: 4,
+    goodreads: "",
+    wikipedia: ""
+  },
+    {
+    cover: "images/books/lifeform-jenny.jpg",
+    title: "Life Form",
+    author: "Jenny Slate",
+    rating: 3.5,
+    goodreads: "",
+    wikipedia: ""
+  },
+    {
+    cover: "images/books/perfection-vincenzo.jpg",
+    title: "Perfection",
+    author: "Vincenzo Latronico",
+    rating: 4,
+    goodreads: "",
+    wikipedia: ""
+  },
+  {
+    cover: "images/books/myyearofrest-ottessa.jpg",
+    title: "My Year Of Rest And Relaxation",
+    author: "Ottessa Moshfegh",
+    rating: 4,
+    goodreads: "",
+    wikipedia: ""
+  },
+  {
+    cover: "images/books/famesick-lena.jpg",
+    title: "Famesick",
+    author: "Lena Dunham",
+    rating: 4.5,
+    goodreads: "",
+    wikipedia: ""
   }
 ];
