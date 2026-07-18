@@ -44,7 +44,7 @@ const SLIDES = [
   },
   {
     image: "images/slideshow/photo2.jpg",
-    sidebarColor: "d2e1acff",
+    sidebarColor: "#d2e1acff",
     textColor: "#406663"
   },
   {
