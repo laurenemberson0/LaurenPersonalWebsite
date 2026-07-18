@@ -29,13 +29,21 @@ function makeCard(item, kind) {
   const media = document.createElement("div");
   media.className = "cover-card__media";
 
-  // If there's a cover image use it; otherwise show a tidy title tile so the
-  // card still looks intentional when no poster/cover has been added yet.
+  // Decide which image to show: a manual cover from data.js wins; otherwise,
+  // for movies, use an auto-fetched poster (js/movie-posters.js) if we have one.
+  let coverSrc = item.cover && item.cover.trim() !== "" ? item.cover : "";
+  if (!coverSrc && kind === "movie" &&
+      typeof MOVIE_POSTERS !== "undefined" && MOVIE_POSTERS[item.title]) {
+    coverSrc = MOVIE_POSTERS[item.title];
+  }
+
+  // If there's an image use it; otherwise show a tidy title tile so the
+  // card still looks intentional when no poster/cover is available yet.
   let art;
-  if (item.cover && item.cover.trim() !== "") {
+  if (coverSrc) {
     art = document.createElement("img");
     art.className = "cover-card__img";
-    art.src = item.cover;
+    art.src = coverSrc;
     art.alt = item.title;
     art.loading = "lazy";
   } else {
