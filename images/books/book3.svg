@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="440" viewBox="0 0 440 440">
-  <rect width="440" height="440" fill="#4f5a7a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+  <rect width="300" height="450" fill="#4f5a7a"/>
   <text x="50%" y="50%" fill="#ffffff" opacity="0.7" font-family="Helvetica,Arial,sans-serif"
-        font-size="26" text-anchor="middle">book 3</text>
+        font-size="22" text-anchor="middle">book 3</text>
 </svg>

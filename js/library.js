@@ -1,5 +1,6 @@
 /* ============================================================================
-   library.js  —  builds the Music and Books rows with hover ratings + links.
+   library.js  —  builds the Music, Books, and Movies rows with hover ratings
+   + links, and wires up the left/right scroll arrows.
    You should not need to edit this file. Edit js/data.js instead.
 ============================================================================ */
 
@@ -13,15 +14,21 @@ const ICONS = {
   wikipedia:
     '<svg class="icon--stroke" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="5" y1="6.5" x2="19" y2="6.5"/><line x1="5" y1="17.5" x2="19" y2="17.5"/></svg>',
   goodreads:
-    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.4 23.3c-1.2-.1-2.3-.5-3.2-1.2-.9-.7-1.5-1.6-1.7-2.7h1.9c.3.7.7 1.3 1.4 1.7.6.4 1.4.6 2.3.6 1.4 0 2.5-.5 3.2-1.4.7-.9 1-2.4 1-4.4v-1.3h-.1c-.5.9-1.1 1.5-1.9 2-.8.4-1.7.6-2.7.6-1.2 0-2.3-.3-3.2-.9-.9-.6-1.6-1.4-2.1-2.5-.5-1.1-.7-2.3-.7-3.6 0-1.4.2-2.6.7-3.6.5-1.1 1.2-1.9 2.1-2.5.9-.6 2-.9 3.2-.9 1 0 1.9.2 2.7.6.8.4 1.4 1.1 1.9 2h.1V3.2h1.9v12.8c0 2.5-.5 4.4-1.5 5.6-1 1.2-2.5 1.7-4.6 1.7h-.1zm.6-8.6c1.2 0 2.2-.4 2.9-1.3.7-.9 1.1-2.1 1.1-3.7s-.4-2.8-1.1-3.7c-.7-.9-1.7-1.3-2.9-1.3s-2.2.4-2.9 1.3c-.7.9-1.1 2.1-1.1 3.7s.4 2.8 1.1 3.7c.7.9 1.7 1.3 2.9 1.3z"/></svg>'
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.4 23.3c-1.2-.1-2.3-.5-3.2-1.2-.9-.7-1.5-1.6-1.7-2.7h1.9c.3.7.7 1.3 1.4 1.7.6.4 1.4.6 2.3.6 1.4 0 2.5-.5 3.2-1.4.7-.9 1-2.4 1-4.4v-1.3h-.1c-.5.9-1.1 1.5-1.9 2-.8.4-1.7.6-2.7.6-1.2 0-2.3-.3-3.2-.9-.9-.6-1.6-1.4-2.1-2.5-.5-1.1-.7-2.3-.7-3.6 0-1.4.2-2.6.7-3.6.5-1.1 1.2-1.9 2.1-2.5.9-.6 2-.9 3.2-.9 1 0 1.9.2 2.7.6.8.4 1.4 1.1 1.9 2h.1V3.2h1.9v12.8c0 2.5-.5 4.4-1.5 5.6-1 1.2-2.5 1.7-4.6 1.7h-.1zm.6-8.6c1.2 0 2.2-.4 2.9-1.3.7-.9 1.1-2.1 1.1-3.7s-.4-2.8-1.1-3.7c-.7-.9-1.7-1.3-2.9-1.3s-2.2.4-2.9 1.3c-.7.9-1.1 2.1-1.1 3.7s.4 2.8 1.1 3.7c.7.9 1.7 1.3 2.9 1.3z"/></svg>',
+  letterboxd:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="3.2"/><circle cx="12" cy="12" r="3.2"/><circle cx="19" cy="12" r="3.2"/></svg>'
 };
 
-/* Build one cover card (works for both albums and books). */
+/* Build one cover card. `kind` is "music", "book", or "movie". */
 function makeCard(item, kind) {
   const card = document.createElement("div");
-  card.className = "cover-card";
+  // Books and movies use tall (poster) covers; music stays square.
+  card.className = "cover-card" + (kind === "music" ? "" : " cover-card--poster");
 
-  // Cover image
+  // The image + hover overlay live inside a fixed-size media box.
+  const media = document.createElement("div");
+  media.className = "cover-card__media";
+
   const img = document.createElement("img");
   img.className = "cover-card__img";
   img.src = item.cover;
@@ -31,10 +38,12 @@ function makeCard(item, kind) {
   // Caption under the cover (always visible)
   const caption = document.createElement("div");
   caption.className = "cover-card__caption";
-  const who = kind === "music" ? item.artist : item.author;
+  const who = kind === "music" ? item.artist
+            : kind === "movie" ? (item.director || "")
+            : item.author;
   caption.innerHTML =
     '<div class="title">' + item.title + "</div>" +
-    '<div class="by">' + who + "</div>";
+    (who ? '<div class="by">' + who + "</div>" : "");
 
   // Hover overlay: star rating + link buttons
   const overlay = document.createElement("div");
@@ -48,17 +57,25 @@ function makeCard(item, kind) {
   const links = document.createElement("div");
   links.className = "overlay-links";
 
-  // Which link buttons to show depends on the kind (music vs book).
-  const linkDefs = kind === "music"
-    ? [
-        { label: "Apple Music", icon: ICONS.apple, url: item.apple },
-        { label: "Spotify", icon: ICONS.spotify, url: item.spotify },
-        { label: "Wikipedia", icon: ICONS.wikipedia, url: item.wikipedia }
-      ]
-    : [
-        { label: "Goodreads", icon: ICONS.goodreads, url: item.goodreads },
-        { label: "Wikipedia", icon: ICONS.wikipedia, url: item.wikipedia }
-      ];
+  // Which link buttons to show depends on the kind.
+  let linkDefs;
+  if (kind === "music") {
+    linkDefs = [
+      { label: "Apple Music", icon: ICONS.apple, url: item.apple },
+      { label: "Spotify", icon: ICONS.spotify, url: item.spotify },
+      { label: "Wikipedia", icon: ICONS.wikipedia, url: item.wikipedia }
+    ];
+  } else if (kind === "movie") {
+    linkDefs = [
+      { label: "Letterboxd", icon: ICONS.letterboxd, url: item.letterboxd },
+      { label: "Wikipedia", icon: ICONS.wikipedia, url: item.wikipedia }
+    ];
+  } else {
+    linkDefs = [
+      { label: "Goodreads", icon: ICONS.goodreads, url: item.goodreads },
+      { label: "Wikipedia", icon: ICONS.wikipedia, url: item.wikipedia }
+    ];
+  }
 
   linkDefs.forEach(function (def) {
     if (def.url && def.url.trim() !== "") {
@@ -75,8 +92,9 @@ function makeCard(item, kind) {
 
   overlay.appendChild(links);
 
-  card.appendChild(img);
-  card.appendChild(overlay);
+  media.appendChild(img);
+  media.appendChild(overlay);
+  card.appendChild(media);
   card.appendChild(caption);
   return card;
 }
@@ -92,3 +110,36 @@ function fillRow(rowId, dataList, kind) {
 
 fillRow("music-row", typeof MUSIC !== "undefined" ? MUSIC : [], "music");
 fillRow("books-row", typeof BOOKS !== "undefined" ? BOOKS : [], "book");
+fillRow("movies-row", typeof MOVIES !== "undefined" ? MOVIES : [], "movie");
+
+/* --- Left/right scroll arrows -------------------------------------------- */
+(function setUpScrollArrows() {
+  const scrollers = document.querySelectorAll(".cover-scroller");
+
+  scrollers.forEach(function (scroller) {
+    const row = scroller.querySelector(".cover-row");
+    const leftBtn = scroller.querySelector(".scroll-btn--left");
+    const rightBtn = scroller.querySelector(".scroll-btn--right");
+    if (!row || !leftBtn || !rightBtn) return;
+
+    // Scroll by most of the visible width when an arrow is clicked.
+    function step() { return Math.max(row.clientWidth * 0.8, 200); }
+    leftBtn.addEventListener("click", function () {
+      row.scrollBy({ left: -step(), behavior: "smooth" });
+    });
+    rightBtn.addEventListener("click", function () {
+      row.scrollBy({ left: step(), behavior: "smooth" });
+    });
+
+    // Fade out an arrow when there's nothing more to scroll that way.
+    function updateArrows() {
+      const maxScroll = row.scrollWidth - row.clientWidth - 1;
+      leftBtn.disabled = row.scrollLeft <= 0;
+      rightBtn.disabled = row.scrollLeft >= maxScroll;
+    }
+    row.addEventListener("scroll", updateArrows);
+    window.addEventListener("resize", updateArrows);
+    window.addEventListener("load", updateArrows);
+    updateArrows();
+  });
+})();

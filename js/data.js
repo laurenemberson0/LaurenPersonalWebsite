@@ -269,3 +269,42 @@ const BOOKS = [
     wikipedia: ""
   }
 ];
+
+
+/* ----------------------------------------------------------------------------
+   7) LIBRARY — MOVIES
+   ----------------------------------------------------------------------------
+   Each movie has:
+     cover      -> movie poster image (put files in "images/movies/")
+     title      -> movie title
+     director   -> director's name (optional — leave "" to hide it)
+     rating     -> your rating from 0 to 5 (half numbers like 4.5 are fine)
+     letterboxd -> Letterboxd link  (leave "" to hide this button)
+     wikipedia  -> Wikipedia link   (leave "" to hide this button)
+---------------------------------------------------------------------------- */
+const MOVIES = [
+  {
+    cover: "images/movies/movie1.svg",
+    title: "Placeholder Movie One",
+    director: "A Director",
+    rating: 5,
+    letterboxd: "https://letterboxd.com",
+    wikipedia: "https://en.wikipedia.org"
+  },
+  {
+    cover: "images/movies/movie2.svg",
+    title: "Placeholder Movie Two",
+    director: "Another Director",
+    rating: 4.5,
+    letterboxd: "https://letterboxd.com",
+    wikipedia: "https://en.wikipedia.org"
+  },
+  {
+    cover: "images/movies/movie3.svg",
+    title: "Placeholder Movie Three",
+    director: "A Third Director",
+    rating: 3.5,
+    letterboxd: "https://letterboxd.com",
+    wikipedia: "https://en.wikipedia.org"
+  }
+];
