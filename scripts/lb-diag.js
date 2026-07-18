@@ -22,7 +22,18 @@ const headerSets = {
   }
 };
 
+async function dumpRss() {
+  const res = await fetch("https://letterboxd.com/laurenemberson/rss/", {
+    headers: headerSets.full
+  });
+  const body = await res.text();
+  console.log("=== RSS BODY (status " + res.status + ", len " + body.length + ") ===");
+  console.log(body.slice(0, 2000));
+  console.log("=== item count: " + (body.split("<item>").length - 1) + " ===");
+}
+
 async function main() {
+  await dumpRss();
   for (const [tname, url] of targets) {
     for (const hname of Object.keys(headerSets)) {
       try {
