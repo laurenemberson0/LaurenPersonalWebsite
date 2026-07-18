@@ -110,7 +110,14 @@ function fillRow(rowId, dataList, kind) {
 
 fillRow("music-row", typeof MUSIC !== "undefined" ? MUSIC : [], "music");
 fillRow("books-row", typeof BOOKS !== "undefined" ? BOOKS : [], "book");
-fillRow("movies-row", typeof MOVIES !== "undefined" ? MOVIES : [], "movie");
+
+/* Movies: prefer the auto-synced Letterboxd list when it has entries,
+   otherwise fall back to the manual list in data.js. */
+var movieList =
+  (typeof MOVIES_AUTO !== "undefined" && Array.isArray(MOVIES_AUTO) && MOVIES_AUTO.length)
+    ? MOVIES_AUTO
+    : (typeof MOVIES !== "undefined" ? MOVIES : []);
+fillRow("movies-row", movieList, "movie");
 
 /* --- Left/right scroll arrows -------------------------------------------- */
 (function setUpScrollArrows() {
