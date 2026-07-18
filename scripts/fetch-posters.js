@@ -49,10 +49,10 @@ async function searchArtwork(title) {
     "https://itunes.apple.com/search?term=" +
     encodeURIComponent(q) +
     "&media=movie&entity=movie&limit=1&country=US";
-  for (let attempt = 0; attempt < 5; attempt++) {
+  for (let attempt = 0; attempt < 3; attempt++) {
     const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
     if (res.status === 403 || res.status === 429) {
-      await sleep(2500 * (attempt + 1)); // backoff on throttling
+      await sleep(30000); // Apple throttled us — wait a full window and retry
       continue;
     }
     if (!res.ok) throw new Error("search HTTP " + res.status);
@@ -90,7 +90,8 @@ async function searchArtwork(title) {
       failed++;
       console.log("fail: " + title + " — " + e.message);
     }
-    await sleep(200);
+    // Apple's search API allows ~20 requests/minute, so pace ~1 every 3.5s.
+    await sleep(3500);
   }
 
   const header =
