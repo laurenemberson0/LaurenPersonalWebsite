@@ -1,7 +1,5 @@
 /* ============================================================
-   AUTO-GENERATED movie posters (fetched from Apple's iTunes API
-   by the fetch-posters GitHub Action). DO NOT EDIT BY HAND.
-   Maps a movie title -> its downloaded poster image path.
-   Until the fetcher runs, this is empty and movies show title tiles.
+   AUTO-GENERATED movie posters (Apple iTunes). DO NOT EDIT.
+   Maps movie title -> downloaded poster image path.
    ============================================================ */
 window.MOVIE_POSTERS = {};
