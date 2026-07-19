@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Download posters from Apple's movie API
+      - name: Download posters from Wikipedia
         run: node scripts/fetch-posters.js
 
       - name: Commit the posters
