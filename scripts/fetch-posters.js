@@ -42,23 +42,34 @@ try {
   if (j) map = JSON.parse(j);
 } catch (e) { /* first run */ }
 
-// One Wikipedia call: search for the film and return its lead image URL.
+// Two Wikipedia calls: (1) find the film's article, (2) pull its lead image
+// (the infobox poster) from the page-summary endpoint.
 async function getPoster(title) {
   const q = title.replace(/\s*\(\d{4}\)\s*$/, "") + " film";
-  const api =
-    "https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1" +
-    "&generator=search&gsrsearch=" + encodeURIComponent(q) + "&gsrlimit=1" +
-    "&prop=pageimages&piprop=thumbnail|original&pithumbsize=450";
-  const res = await fetch(api, { headers: { "User-Agent": UA } });
-  if (res.status === 429) { const e = new Error("throttled"); e.throttled = true; throw e; }
-  if (!res.ok) throw new Error("wiki HTTP " + res.status);
-  const data = await res.json();
-  const pages = data.query && data.query.pages;
-  if (!pages) return null;
-  const first = Object.values(pages)[0];
-  if (!first) return null;
-  if (first.thumbnail && first.thumbnail.source) return first.thumbnail.source;
-  if (first.original && first.original.source) return first.original.source;
+
+  // 1) Search for the article title.
+  const searchUrl =
+    "https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srlimit=1" +
+    "&srsearch=" + encodeURIComponent(q);
+  const r1 = await fetch(searchUrl, { headers: { "User-Agent": UA } });
+  if (r1.status === 429) { const e = new Error("throttled"); e.throttled = true; throw e; }
+  if (!r1.ok) throw new Error("search HTTP " + r1.status);
+  const d1 = await r1.json();
+  const hit = d1.query && d1.query.search && d1.query.search[0];
+  if (!hit) return null;
+
+  await sleep(150);
+
+  // 2) Get that article's lead image from the summary endpoint.
+  const sumUrl =
+    "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+    encodeURIComponent(hit.title.replace(/ /g, "_"));
+  const r2 = await fetch(sumUrl, { headers: { "User-Agent": UA } });
+  if (r2.status === 429) { const e = new Error("throttled"); e.throttled = true; throw e; }
+  if (!r2.ok) throw new Error("summary HTTP " + r2.status);
+  const d2 = await r2.json();
+  if (d2.thumbnail && d2.thumbnail.source) return d2.thumbnail.source;
+  if (d2.originalimage && d2.originalimage.source) return d2.originalimage.source;
   return null;
 }
 
