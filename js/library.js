@@ -116,11 +116,25 @@ function makeCard(item, kind) {
   return card;
 }
 
-/* Fill a row element with cards from a data list. */
+/* Shuffle a list on every load, but weighted so higher-rated items tend to
+   land near the front (with real randomness and some tier crossover).
+   Uses the Efraimidis–Spirakis method: key = random^(1/weight); sort by key
+   descending. A 5-star item usually beats a 3-star one, but not always. */
+function weightedShuffle(list) {
+  return list
+    .map(function (item) {
+      const w = typeof item.rating === "number" && item.rating > 0 ? item.rating : 0.5;
+      return { item: item, key: Math.pow(Math.random(), 1 / w) };
+    })
+    .sort(function (a, b) { return b.key - a.key; })
+    .map(function (x) { return x.item; });
+}
+
+/* Fill a row element with cards from a data list (shuffled, front-weighted). */
 function fillRow(rowId, dataList, kind) {
   const row = document.getElementById(rowId);
   if (!row || !Array.isArray(dataList)) return;
-  dataList.forEach(function (item) {
+  weightedShuffle(dataList).forEach(function (item) {
     row.appendChild(makeCard(item, kind));
   });
 }
