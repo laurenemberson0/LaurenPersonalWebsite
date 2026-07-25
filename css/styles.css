@@ -381,6 +381,12 @@ a { color: inherit; }
   color: #ffd166;
 }
 
+.overlay-date {
+  font-size: 0.8rem;
+  color: #e6e6e6;
+  letter-spacing: 0.02em;
+}
+
 .overlay-links {
   display: flex;
   flex-wrap: wrap;

@@ -71,6 +71,14 @@ function makeCard(item, kind) {
   stars.textContent = starString(item.rating);
   overlay.appendChild(stars);
 
+  // Optional date watched/read, shown under the stars on hover.
+  if (item.date && item.date.trim() !== "") {
+    const dateEl = document.createElement("div");
+    dateEl.className = "overlay-date";
+    dateEl.textContent = item.date;
+    overlay.appendChild(dateEl);
+  }
+
   const links = document.createElement("div");
   links.className = "overlay-links";
 

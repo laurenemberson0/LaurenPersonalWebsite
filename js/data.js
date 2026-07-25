@@ -202,6 +202,8 @@ const MUSIC = [
      rating    -> your rating from 0 to 5 (half numbers like 4.5 are fine)
      goodreads -> Goodreads link  (leave "" to hide this button)
      wikipedia -> Wikipedia link  (leave "" to hide this button)
+     date      -> month + year you read it, e.g. "January 2026" (shown on hover;
+                  leave "" or remove to hide it)
 ---------------------------------------------------------------------------- */
 const BOOKS = [
   {
@@ -210,7 +212,8 @@ const BOOKS = [
     author: "Chuck Klosterman",
     rating: 4,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
   {
     cover: "images/books/alphabeticaldiaries-sheila.jpg",
@@ -218,7 +221,8 @@ const BOOKS = [
     author: "Sheila Heti",
     rating: 4,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
     {
     cover: "images/books/goodmaterial-dolly.jpg",
@@ -226,7 +230,8 @@ const BOOKS = [
     author: "Dolly Alderton",
     rating: 3,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
   {
     cover: "images/books/artislife-jerry.jpg",
@@ -234,7 +239,8 @@ const BOOKS = [
     author: "Jerry Saltz",
     rating: 4,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
     {
     cover: "images/books/lifeform-jenny.jpg",
@@ -242,7 +248,8 @@ const BOOKS = [
     author: "Jenny Slate",
     rating: 3.5,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
     {
     cover: "images/books/perfection-vincenzo.jpg",
@@ -250,7 +257,8 @@ const BOOKS = [
     author: "Vincenzo Latronico",
     rating: 4,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
   {
     cover: "images/books/myyearofrest-ottessa.jpg",
@@ -258,7 +266,8 @@ const BOOKS = [
     author: "Ottessa Moshfegh",
     rating: 4,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   },
   {
     cover: "images/books/famesick-lena.jpg",
@@ -266,7 +275,8 @@ const BOOKS = [
     author: "Lena Dunham",
     rating: 4.5,
     goodreads: "",
-    wikipedia: ""
+    wikipedia: "",
+    date: "January 2026"
   }
 ];
 
@@ -281,6 +291,8 @@ const BOOKS = [
      rating     -> your rating from 0 to 5 (half numbers like 4.5 are fine)
      letterboxd -> Letterboxd link  (leave "" to hide this button)
      wikipedia  -> Wikipedia link   (leave "" to hide this button)
+     date       -> month + year you watched it, e.g. "March 2026" (shown on
+                   hover; add it per movie, or leave out to hide it)
 ---------------------------------------------------------------------------- */
 const MOVIES = [
   // Transcribed from your Letterboxd screenshots, sorted by your rating.
