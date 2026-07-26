@@ -118,6 +118,7 @@ const SEND_ME_AWAY = [
   "https://jspaint.app/#local:14066bffee5df",
   "https://sandspiel.club/",
   "https://radio.garden/",
+  "https://thetorontoreview.ca/",
   "https://www.thisiscolossal.com",
 ];
 
