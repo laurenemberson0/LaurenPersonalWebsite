@@ -100,7 +100,7 @@ const SLIDE_DURATION = 7000;
    This button sends visitors to your photography website.
    Replace the address below with your real photo site.
 ---------------------------------------------------------------------------- */
-const PHOTO_URL = "https://laurenembersonphotography.com";
+const PHOTO_URL = "https://www.laurenembersonphotography.com";
 
 
 /* ----------------------------------------------------------------------------
