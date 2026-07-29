@@ -350,6 +350,7 @@ const MOVIES = [
   { cover: "", title: "The Dawn Wall", director: "", rating: 4.5, date: "May 2020", letterboxd: "https://boxd.it/hCP0", wikipedia: "" },
   { cover: "", title: "The Fox and the Hound", director: "", rating: 4, date: "~2003", letterboxd: "https://boxd.it/1V0o", wikipedia: "" },
   { cover: "", title: "The French Dispatch", director: "", rating: 4.5, date: "May 2022", letterboxd: "https://boxd.it/jLP8", wikipedia: "" },
+  { cover: "", title: "The Invite", director: "", rating: 4.5, date: "July 2026", letterboxd: "https://letterboxd.com/film/the-invite-2026/", wikipedia: "" },
   { cover: "", title: "The Worst Person in the World", director: "", rating: 4.5, date: "April 2022", letterboxd: "https://boxd.it/oyws", wikipedia: "" },
   { cover: "", title: "There's Something About Mary", director: "", rating: 3, date: "April 2023", letterboxd: "https://boxd.it/2aae", wikipedia: "" },
   { cover: "", title: "Up", director: "", rating: 4.5, date: "June 2009", letterboxd: "https://boxd.it/1OEc", wikipedia: "" },
