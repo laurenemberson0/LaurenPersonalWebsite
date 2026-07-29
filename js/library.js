@@ -59,8 +59,9 @@ function makeCard(item, kind) {
             : kind === "movie" ? (item.director || "")
             : item.author;
   caption.innerHTML =
-    '<div class="title">' + item.title + "</div>" +
-    (item.year ? '<div class="year">' + item.year + "</div>" : "") +
+    '<div class="title">' + item.title +
+      (item.year ? ' <span class="year">(' + item.year + ")</span>" : "") +
+    "</div>" +
     (who ? '<div class="by">' + who + "</div>" : "");
 
   // Hover overlay: star rating + link buttons

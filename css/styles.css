@@ -352,7 +352,7 @@ a { color: inherit; }
   font-size: 0.9rem;
 }
 .cover-card__caption .title { font-weight: 600; }
-.cover-card__caption .year { color: #6b6b6b; }
+.cover-card__caption .year { color: #6b6b6b; font-weight: 400; }
 .cover-card__caption .by { color: #777; }
 
 /* The panel that appears when you hover over a cover */
