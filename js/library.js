@@ -60,6 +60,7 @@ function makeCard(item, kind) {
             : item.author;
   caption.innerHTML =
     '<div class="title">' + item.title + "</div>" +
+    (item.year ? '<div class="year">' + item.year + "</div>" : "") +
     (who ? '<div class="by">' + who + "</div>" : "");
 
   // Hover overlay: star rating + link buttons
@@ -75,7 +76,10 @@ function makeCard(item, kind) {
   if (item.date && item.date.trim() !== "") {
     const dateEl = document.createElement("div");
     dateEl.className = "overlay-date";
-    dateEl.textContent = item.date;
+    const prefix = kind === "movie" ? "last watched: "
+                 : kind === "book" ? "last read: "
+                 : "";
+    dateEl.textContent = prefix + item.date;
     overlay.appendChild(dateEl);
   }
 
@@ -124,15 +128,18 @@ function makeCard(item, kind) {
   return card;
 }
 
-/* Shuffle a list on every load, but weighted so higher-rated items tend to
-   land near the front (with real randomness and some tier crossover).
-   Uses the Efraimidis–Spirakis method: key = random^(1/weight); sort by key
-   descending. A 5-star item usually beats a 3-star one, but not always. */
+/* Shuffle a list on every load, but heavily weighted so the highest-rated
+   items land at the front — the opening of each row is almost entirely 4–5
+   star media, with only mild crossover between neighbouring rating tiers.
+   Each item gets key = rating + random*SPREAD, sorted high to low. Because
+   SPREAD is smaller than one rating step, a lower tier can only occasionally
+   edge past the very bottom of the tier above it, never reach the front. */
 function weightedShuffle(list) {
+  const SPREAD = 1.3;   // smaller = more strictly ordered by rating
   return list
     .map(function (item) {
-      const w = typeof item.rating === "number" && item.rating > 0 ? item.rating : 0.5;
-      return { item: item, key: Math.pow(Math.random(), 1 / w) };
+      const r = typeof item.rating === "number" ? item.rating : 0;
+      return { item: item, key: r + Math.random() * SPREAD };
     })
     .sort(function (a, b) { return b.key - a.key; })
     .map(function (x) { return x.item; });
