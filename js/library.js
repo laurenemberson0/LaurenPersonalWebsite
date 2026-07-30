@@ -19,6 +19,79 @@ const ICONS = {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="3.2"/><circle cx="12" cy="12" r="3.2"/><circle cx="19" cy="12" r="3.2"/></svg>'
 };
 
+/* ----------------------------------------------------------------------------
+   Album cover art — fetched live from Apple's public music catalogue.
+   Music entries ship without local cover files; instead, the first time an
+   album's card scrolls into view we look it up in the iTunes Search API (via
+   JSONP so it works from a plain static page), then cache the result in the
+   browser so we never look it up twice. If nothing is found, the card simply
+   keeps its tidy text tile — so this can only ever add covers, never break.
+---------------------------------------------------------------------------- */
+function fetchAlbumArt(artist, title, cb) {
+  let store = null;
+  try { store = window.localStorage; } catch (e) {}
+  const key = "albumart:" + artist + "::" + title;
+  if (store) {
+    const hit = store.getItem(key);
+    if (hit) { cb(hit); return; }          // only successful lookups are cached
+  }
+  const cbName = "itunesArt" + (fetchAlbumArt._n = (fetchAlbumArt._n || 0) + 1);
+  const script = document.createElement("script");
+  let done = false;
+  function finish(url) {
+    if (done) return;
+    done = true;
+    try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+    if (script.parentNode) script.parentNode.removeChild(script);
+    if (url && store) { try { store.setItem(key, url); } catch (e) {} }
+    cb(url || null);
+  }
+  window[cbName] = function (data) {
+    let url = "";
+    if (data && data.results && data.results[0] && data.results[0].artworkUrl100) {
+      url = data.results[0].artworkUrl100.replace("100x100bb", "600x600bb");
+    }
+    finish(url);
+  };
+  script.onerror = function () { finish(null); };
+  script.src = "https://itunes.apple.com/search?media=music&entity=album&limit=1&term=" +
+    encodeURIComponent(artist + " " + title) + "&callback=" + cbName;
+  document.body.appendChild(script);
+  setTimeout(function () { finish(null); }, 8000);   // stop waiting if it stalls
+}
+
+function swapInCover(el, item, url) {
+  if (!url || !el.parentNode) return;
+  const img = document.createElement("img");
+  img.className = "cover-card__img";
+  img.src = url;
+  img.alt = item.title;
+  img.loading = "lazy";
+  el.replaceWith(img);
+}
+
+const albumArtObserver =
+  ("IntersectionObserver" in window)
+    ? new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          obs.unobserve(entry.target);
+          const el = entry.target;
+          fetchAlbumArt(el.__album.artist, el.__album.title, function (url) {
+            swapInCover(el, el.__album, url);
+          });
+        });
+      }, { rootMargin: "300px" })
+    : null;
+
+function scheduleAlbumArt(fallbackEl, item) {
+  fallbackEl.__album = item;
+  if (albumArtObserver) albumArtObserver.observe(fallbackEl);
+  else fetchAlbumArt(item.artist, item.title, function (url) {
+    swapInCover(fallbackEl, item, url);
+  });
+}
+
 /* Build one cover card. `kind` is "music", "book", or "movie". */
 function makeCard(item, kind) {
   const card = document.createElement("div");
@@ -50,6 +123,8 @@ function makeCard(item, kind) {
     art = document.createElement("div");
     art.className = "cover-card__fallback";
     art.textContent = item.title;
+    // For albums with no local cover, try to pull one from Apple's catalogue.
+    if (kind === "music" && item.artist) scheduleAlbumArt(art, item);
   }
 
   // Caption under the cover (always visible)
@@ -68,10 +143,13 @@ function makeCard(item, kind) {
   const overlay = document.createElement("div");
   overlay.className = "cover-card__overlay";
 
-  const stars = document.createElement("div");
-  stars.className = "stars";
-  stars.textContent = starString(item.rating);
-  overlay.appendChild(stars);
+  // Only show a star rating when one has actually been given.
+  if (typeof item.rating === "number" && item.rating > 0) {
+    const stars = document.createElement("div");
+    stars.className = "stars";
+    stars.textContent = starString(item.rating);
+    overlay.appendChild(stars);
+  }
 
   // Optional date watched/read, shown under the stars on hover.
   if (item.date && item.date.trim() !== "") {
