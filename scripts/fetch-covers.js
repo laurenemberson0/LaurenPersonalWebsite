@@ -117,22 +117,22 @@ async function getItunesCover(m) {
 
 // Deezer's public API — no key, lenient rate limits, and broad indie coverage.
 // Returns real cover artwork (cover_xl is ~1000x1000).
-async function getDeezerCover(m) {
-  const q = 'artist:"' + m.artist.replace(/"/g, "") + '" album:"' + m.title.replace(/"/g, "") + '"';
+async function deezerSearch(q) {
   const url = "https://api.deezer.com/search/album?limit=25&q=" + encodeURIComponent(q);
-  let d = null;
-  for (let attempt = 0; attempt < 4 && d === null; attempt++) {
+  for (let attempt = 0; attempt < 4; attempt++) {
     const r = await fetch(url, { headers: { "User-Agent": UA } });
     if (r.status === 429) { await sleep(4000); continue; }  // throttled
     if (!r.ok) return null;
-    d = await r.json();
-    if (d && d.error && d.error.code === 4) { d = null; await sleep(4000); continue; }  // quota
+    const d = await r.json();
+    if (d && d.error && d.error.code === 4) { await sleep(4000); continue; }  // quota
+    return d;
   }
-  if (!d) return null;
-  const results = d.data || [];
+  return null;
+}
+function pickDeezer(results, m) {
   const nt = norm(m.title), na = norm(m.artist);
   let best = null, bestScore = 0;
-  for (const a of results) {
+  for (const a of results || []) {
     const cn = norm(a.title), an = norm(a.artist && a.artist.name);
     const artistOk = an && (an.includes(na) || na.includes(an));
     let score = 0;
@@ -144,6 +144,18 @@ async function getDeezerCover(m) {
   }
   if (!best || bestScore < 1) return null;
   return best.cover_xl || best.cover_big || best.cover_medium || null;
+}
+async function getDeezerCover(m) {
+  // Try a precise field query first, then a looser free-text one.
+  const strict = 'artist:"' + m.artist.replace(/"/g, "") + '" album:"' + m.title.replace(/"/g, "") + '"';
+  const loose = m.artist + " " + m.title;
+  for (const q of [strict, loose]) {
+    const d = await deezerSearch(q);
+    const cover = d && pickDeezer(d.data, m);
+    if (cover) return cover;
+    await sleep(200);
+  }
+  return null;
 }
 
 // Try Deezer first (lenient limits), then Apple. Never Wikipedia — its lead
