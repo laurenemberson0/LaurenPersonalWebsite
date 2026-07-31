@@ -88,9 +88,9 @@ async function getItunesCover(m) {
   const url = "https://itunes.apple.com/search?media=music&entity=album&limit=50&term=" +
     encodeURIComponent(m.artist + " " + m.title);
   let results = null;
-  for (let attempt = 0; attempt < 3 && results === null; attempt++) {
+  for (let attempt = 0; attempt < 6 && results === null; attempt++) {
     const r = await fetch(url, { headers: { "User-Agent": UA } });
-    if (r.status === 403 || r.status === 429) { await sleep(3000); continue; }  // throttled
+    if (r.status === 403 || r.status === 429) { await sleep(5000); continue; }  // throttled: back off
     if (!r.ok) return null;
     results = (await r.json()).results || [];
   }
@@ -115,13 +115,12 @@ async function getItunesCover(m) {
   return best.artworkUrl100.replace("100x100bb", "600x600bb");
 }
 
-// Prefer Apple (real cover art); only fall back to Wikipedia's lead image for
-// anything Apple doesn't carry.
+// Apple only. Wikipedia's lead image is usually a live band photo rather than
+// the album cover, so a miss here should stay a clean text tile, not a wrong
+// photo. (getWikipediaCover is kept above for reference but intentionally
+// unused.)
 async function getCover(m) {
-  const apple = await getItunesCover(m);
-  if (apple) return apple;
-  await sleep(150);
-  return await getWikipediaCover(m);
+  return await getItunesCover(m);
 }
 
 (async () => {
@@ -152,7 +151,7 @@ async function getCover(m) {
       if (e.throttled) { throttled++; }
       else { failed++; console.log("fail: " + key + " — " + e.message); }
     }
-    await sleep(600); // be polite to the APIs
+    await sleep(3500); // iTunes throttles ~20 req/min; stay well under it
   }
 
   const header =
