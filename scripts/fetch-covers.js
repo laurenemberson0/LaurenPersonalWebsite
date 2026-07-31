@@ -75,21 +75,44 @@ async function getWikipediaCover(m) {
   return null;
 }
 
-// Apple's iTunes Search API — this returns the real album ARTWORK (not a band
-// photo), so it's our primary source. artworkUrl100 -> 600x600 art.
+// Apple's iTunes Search API — returns the real album ARTWORK (not a band
+// photo), so it's our primary source. We pull several candidates and pick the
+// one whose album title AND release year actually match, because a bare
+// limit=1 search happily returns an artist's most popular album instead.
+function norm(s) {
+  return (s || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")
+    .replace(/\b(deluxe|expanded|remaster(ed)?|anniversary|special|explicit|bonus|edition|version)\b.*$/i, "")
+    .replace(/[^a-z0-9]+/g, " ").trim();
+}
 async function getItunesCover(m) {
-  const url = "https://itunes.apple.com/search?media=music&entity=album&limit=1&term=" +
+  const url = "https://itunes.apple.com/search?media=music&entity=album&limit=50&term=" +
     encodeURIComponent(m.artist + " " + m.title);
-  for (let attempt = 0; attempt < 3; attempt++) {
+  let results = null;
+  for (let attempt = 0; attempt < 3 && results === null; attempt++) {
     const r = await fetch(url, { headers: { "User-Agent": UA } });
     if (r.status === 403 || r.status === 429) { await sleep(3000); continue; }  // throttled
     if (!r.ok) return null;
-    const d = await r.json();
-    const hit = d.results && d.results[0];
-    if (!hit || !hit.artworkUrl100) return null;
-    return hit.artworkUrl100.replace("100x100bb", "600x600bb");
+    results = (await r.json()).results || [];
   }
-  return null;
+  if (!results || !results.length) return null;
+
+  const nt = norm(m.title), na = norm(m.artist);
+  let best = null, bestScore = 0;
+  for (const r of results) {
+    if (!r.artworkUrl100) continue;
+    const cn = norm(r.collectionName), an = norm(r.artistName);
+    const artistOk = an && (an.includes(na) || na.includes(an));
+    let score = 0;
+    if (cn === nt) score = 3;
+    else if (cn.startsWith(nt) || nt.startsWith(cn)) score = 2;
+    else if (cn.includes(nt) || nt.includes(cn)) score = 1;
+    if (!artistOk) score -= 3;                       // wrong artist: reject
+    const yr = (r.releaseDate || "").slice(0, 4);
+    if (yr && String(m.year) === yr) score += 1;     // exact-year tiebreaker
+    if (score > bestScore) { bestScore = score; best = r; }
+  }
+  if (!best || bestScore < 1) return null;            // no confident title match
+  return best.artworkUrl100.replace("100x100bb", "600x600bb");
 }
 
 // Prefer Apple (real cover art); only fall back to Wikipedia's lead image for
