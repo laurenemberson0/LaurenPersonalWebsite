@@ -75,25 +75,30 @@ async function getWikipediaCover(m) {
   return null;
 }
 
-// Fallback for indie albums not on Wikipedia: Apple's iTunes Search API, which
-// carries almost everything on Apple Music. artworkUrl100 -> 600x600 art.
+// Apple's iTunes Search API — this returns the real album ARTWORK (not a band
+// photo), so it's our primary source. artworkUrl100 -> 600x600 art.
 async function getItunesCover(m) {
   const url = "https://itunes.apple.com/search?media=music&entity=album&limit=1&term=" +
     encodeURIComponent(m.artist + " " + m.title);
-  const r = await fetch(url, { headers: { "User-Agent": UA } });
-  if (!r.ok) return null;
-  const d = await r.json();
-  const hit = d.results && d.results[0];
-  if (!hit || !hit.artworkUrl100) return null;
-  return hit.artworkUrl100.replace("100x100bb", "600x600bb");
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const r = await fetch(url, { headers: { "User-Agent": UA } });
+    if (r.status === 403 || r.status === 429) { await sleep(3000); continue; }  // throttled
+    if (!r.ok) return null;
+    const d = await r.json();
+    const hit = d.results && d.results[0];
+    if (!hit || !hit.artworkUrl100) return null;
+    return hit.artworkUrl100.replace("100x100bb", "600x600bb");
+  }
+  return null;
 }
 
-// Try Wikipedia first, then Apple.
+// Prefer Apple (real cover art); only fall back to Wikipedia's lead image for
+// anything Apple doesn't carry.
 async function getCover(m) {
-  const wiki = await getWikipediaCover(m);
-  if (wiki) return wiki;
+  const apple = await getItunesCover(m);
+  if (apple) return apple;
   await sleep(150);
-  return await getItunesCover(m);
+  return await getWikipediaCover(m);
 }
 
 (async () => {
@@ -124,7 +129,7 @@ async function getCover(m) {
       if (e.throttled) { throttled++; }
       else { failed++; console.log("fail: " + key + " — " + e.message); }
     }
-    await sleep(300); // be polite to Wikipedia
+    await sleep(600); // be polite to the APIs
   }
 
   const header =
