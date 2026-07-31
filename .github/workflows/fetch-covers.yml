@@ -1,0 +1,35 @@
+name: fetch-covers
+
+# Run this by hand from the Actions tab (it's a one-time / re-runnable job).
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download album covers from Wikipedia
+        run: node scripts/fetch-covers.js
+
+      - name: Commit the covers
+        run: |
+          git config user.name "cover-fetcher"
+          git config user.email "actions@users.noreply.github.com"
+          git add images/albums js/album-covers.js
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Add album covers fetched from Wikipedia"
+            git push
+          fi

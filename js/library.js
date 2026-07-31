@@ -109,6 +109,10 @@ function makeCard(item, kind) {
       typeof MOVIE_POSTERS !== "undefined" && MOVIE_POSTERS[item.title]) {
     coverSrc = MOVIE_POSTERS[item.title];
   }
+  if (!coverSrc && kind === "music" && typeof ALBUM_COVERS !== "undefined") {
+    const albumKey = item.artist + "::" + item.title + "::" + item.year;
+    if (ALBUM_COVERS[albumKey]) coverSrc = ALBUM_COVERS[albumKey];
+  }
 
   // If there's an image use it; otherwise show a tidy title tile so the
   // card still looks intentional when no poster/cover is available yet.
