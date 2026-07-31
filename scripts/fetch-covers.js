@@ -179,6 +179,8 @@ async function getMusicBrainzCover(m) {
     else if (cn.startsWith(nt) || nt.startsWith(cn)) score = 2;
     else if (cn.includes(nt) || nt.includes(cn)) score = 1;
     if (!artistOk) score -= 3;
+    const yr = (g["first-release-date"] || "").slice(0, 4);
+    if (yr && String(m.year) === yr) score += 2;   // disambiguate same-title albums by year
     if (score > bestScore) { bestScore = score; best = g; }
   }
   if (!best || bestScore < 1) return null;
@@ -194,6 +196,14 @@ async function getMusicBrainzCover(m) {
 // Wikipedia — its lead image is usually a live band photo, so a miss stays a
 // clean text tile.
 async function getCover(m) {
+  // Self-titled albums (title === artist) can't be told apart by Deezer/Apple
+  // when an artist has more than one, so resolve those via MusicBrainz first,
+  // which distinguishes them by release year.
+  if (norm(m.title) === norm(m.artist)) {
+    const mb = await getMusicBrainzCover(m);
+    if (mb) return mb;
+    await sleep(300);
+  }
   const dz = await getDeezerCover(m);
   if (dz) return dz;
   await sleep(200);
