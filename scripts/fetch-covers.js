@@ -115,11 +115,43 @@ async function getItunesCover(m) {
   return best.artworkUrl100.replace("100x100bb", "600x600bb");
 }
 
-// Apple only. Wikipedia's lead image is usually a live band photo rather than
-// the album cover, so a miss here should stay a clean text tile, not a wrong
-// photo. (getWikipediaCover is kept above for reference but intentionally
-// unused.)
+// Deezer's public API — no key, lenient rate limits, and broad indie coverage.
+// Returns real cover artwork (cover_xl is ~1000x1000).
+async function getDeezerCover(m) {
+  const q = 'artist:"' + m.artist.replace(/"/g, "") + '" album:"' + m.title.replace(/"/g, "") + '"';
+  const url = "https://api.deezer.com/search/album?limit=25&q=" + encodeURIComponent(q);
+  let d = null;
+  for (let attempt = 0; attempt < 4 && d === null; attempt++) {
+    const r = await fetch(url, { headers: { "User-Agent": UA } });
+    if (r.status === 429) { await sleep(4000); continue; }  // throttled
+    if (!r.ok) return null;
+    d = await r.json();
+    if (d && d.error && d.error.code === 4) { d = null; await sleep(4000); continue; }  // quota
+  }
+  if (!d) return null;
+  const results = d.data || [];
+  const nt = norm(m.title), na = norm(m.artist);
+  let best = null, bestScore = 0;
+  for (const a of results) {
+    const cn = norm(a.title), an = norm(a.artist && a.artist.name);
+    const artistOk = an && (an.includes(na) || na.includes(an));
+    let score = 0;
+    if (cn === nt) score = 3;
+    else if (cn.startsWith(nt) || nt.startsWith(cn)) score = 2;
+    else if (cn.includes(nt) || nt.includes(cn)) score = 1;
+    if (!artistOk) score -= 3;
+    if (score > bestScore) { bestScore = score; best = a; }
+  }
+  if (!best || bestScore < 1) return null;
+  return best.cover_xl || best.cover_big || best.cover_medium || null;
+}
+
+// Try Deezer first (lenient limits), then Apple. Never Wikipedia — its lead
+// image is usually a live band photo, so a miss stays a clean text tile.
 async function getCover(m) {
+  const dz = await getDeezerCover(m);
+  if (dz) return dz;
+  await sleep(200);
   return await getItunesCover(m);
 }
 
@@ -151,7 +183,7 @@ async function getCover(m) {
       if (e.throttled) { throttled++; }
       else { failed++; console.log("fail: " + key + " — " + e.message); }
     }
-    await sleep(3500); // iTunes throttles ~20 req/min; stay well under it
+    await sleep(1500); // gentle pacing; Deezer's limits are generous
   }
 
   const header =
