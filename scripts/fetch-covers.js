@@ -158,13 +158,49 @@ async function getDeezerCover(m) {
   return null;
 }
 
-// Try Deezer first (lenient limits), then Apple. Never Wikipedia — its lead
-// image is usually a live band photo, so a miss stays a clean text tile.
+// MusicBrainz release-group lookup -> Cover Art Archive front image. Slower
+// (MB asks for <=1 req/s) but a reliable last resort for anything Deezer and
+// Apple miss.
+async function getMusicBrainzCover(m) {
+  const q = 'releasegroup:"' + m.title.replace(/"/g, "") + '" AND artist:"' + m.artist.replace(/"/g, "") + '"';
+  const url = "https://musicbrainz.org/ws/2/release-group?fmt=json&limit=10&query=" + encodeURIComponent(q);
+  const r = await fetch(url, { headers: { "User-Agent": UA } });
+  if (!r.ok) return null;
+  const d = await r.json();
+  const groups = d["release-groups"] || [];
+  const nt = norm(m.title), na = norm(m.artist);
+  let best = null, bestScore = 0;
+  for (const g of groups) {
+    const cn = norm(g.title);
+    const an = norm((g["artist-credit"] || []).map((a) => a.name).join(" "));
+    const artistOk = an && (an.includes(na) || na.includes(an));
+    let score = 0;
+    if (cn === nt) score = 3;
+    else if (cn.startsWith(nt) || nt.startsWith(cn)) score = 2;
+    else if (cn.includes(nt) || nt.includes(cn)) score = 1;
+    if (!artistOk) score -= 3;
+    if (score > bestScore) { bestScore = score; best = g; }
+  }
+  if (!best || bestScore < 1) return null;
+  // Cover Art Archive redirects /front to the actual image; the download
+  // step's fetch follows the redirect. Returns 404 if the group has no art.
+  const caa = "https://coverartarchive.org/release-group/" + best.id + "/front-500";
+  const head = await fetch(caa, { method: "HEAD", headers: { "User-Agent": UA } });
+  if (!head.ok) return null;
+  return caa;
+}
+
+// Try Deezer first (lenient limits), then Apple, then MusicBrainz/CAA. Never
+// Wikipedia — its lead image is usually a live band photo, so a miss stays a
+// clean text tile.
 async function getCover(m) {
   const dz = await getDeezerCover(m);
   if (dz) return dz;
   await sleep(200);
-  return await getItunesCover(m);
+  const it = await getItunesCover(m);
+  if (it) return it;
+  await sleep(1100);   // MusicBrainz asks for <=1 req/s
+  return await getMusicBrainzCover(m);
 }
 
 (async () => {
