@@ -48,7 +48,7 @@ try {
 
 // Two Wikipedia calls: (1) find the album's article, (2) pull its lead image
 // (the infobox cover) from the page-summary endpoint.
-async function getCover(m) {
+async function getWikipediaCover(m) {
   const q = '"' + m.title + '" ' + m.artist + " " + m.year + " album";
 
   const searchUrl =
@@ -73,6 +73,27 @@ async function getCover(m) {
   if (d2.thumbnail && d2.thumbnail.source) return d2.thumbnail.source;
   if (d2.originalimage && d2.originalimage.source) return d2.originalimage.source;
   return null;
+}
+
+// Fallback for indie albums not on Wikipedia: Apple's iTunes Search API, which
+// carries almost everything on Apple Music. artworkUrl100 -> 600x600 art.
+async function getItunesCover(m) {
+  const url = "https://itunes.apple.com/search?media=music&entity=album&limit=1&term=" +
+    encodeURIComponent(m.artist + " " + m.title);
+  const r = await fetch(url, { headers: { "User-Agent": UA } });
+  if (!r.ok) return null;
+  const d = await r.json();
+  const hit = d.results && d.results[0];
+  if (!hit || !hit.artworkUrl100) return null;
+  return hit.artworkUrl100.replace("100x100bb", "600x600bb");
+}
+
+// Try Wikipedia first, then Apple.
+async function getCover(m) {
+  const wiki = await getWikipediaCover(m);
+  if (wiki) return wiki;
+  await sleep(150);
+  return await getItunesCover(m);
 }
 
 (async () => {
