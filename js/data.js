@@ -120,7 +120,8 @@ const SEND_ME_AWAY = [
   "https://radio.garden/",
   "https://thetorontoreview.ca/",
   "https://www.thisiscolossal.com",
-  "https://bouncingdvdlogo.com/"
+  "https://bouncingdvdlogo.com/",
+  "https://carefulwords.com/"
 ];
 
 
